@@ -52,7 +52,7 @@ export function WaitlistForm() {
       addToast({
         title: "Validation Error",
         description: "Please fix the errors in the form",
-        variant: "error" // Add variant if required
+      // Add variant if required
       })
       setIsPending(false)
       return
@@ -75,7 +75,7 @@ export function WaitlistForm() {
           addToast({
             title: "Already Registered",
             description: "This email is already on our waitlist!",
-            variant: "warning"
+         
           })
         } else {
           throw error
@@ -86,7 +86,7 @@ export function WaitlistForm() {
       addToast({
         title: "Success!",
         description: "You've been added to the waitlist.",
-        variant: "success"
+
       })
 
       setEmail("")
@@ -98,7 +98,7 @@ export function WaitlistForm() {
       addToast({
         title: "Error",
         description: "Something went wrong. Please try again.",
-        variant: "error"
+     
       })
     } finally {
       setIsPending(false)
