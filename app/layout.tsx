@@ -1,9 +1,14 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import "@/styles/globals.css";
+import { Metadata, Viewport } from "next";
 import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+import clsx from "clsx";
+
+import { Providers } from "./providers";
+
+import { siteConfig } from "@/config/site";
+import { fontSans } from "@/config/fonts";
+
 
 export const metadata: Metadata = {
   title: "Fashnect - Connect with Fashion Buyers & Sellers",
@@ -72,14 +77,21 @@ const jsonLd = {
   }
 }
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
+    <html suppressHydrationWarning lang="en">
+  <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-title" content="Fashnect" />
@@ -96,10 +108,18 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={inter.className}>
+      <body
+        className={clsx(
+          " text-foreground  font-sans antialiased",
+          fontSans.variable,
+        )}
+      >
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+
         {children}
+
+        </Providers>
       </body>
     </html>
-  )
+  );
 }
-

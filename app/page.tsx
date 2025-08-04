@@ -1,45 +1,23 @@
-"use client"
 
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
-import { useActionState } from "react"
-import { joinWaitlist, type FormState } from "@/lib/actions"
-import { PhoneInput } from "@/components/phone-input"
-import { TextHoverEffect } from "@/components/ui/text-hover-effect"
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation"
-import Image from "next/image"
-import { WaitlistForm } from "@/components/WaitlistForm"
+import { BackgroundGradientAnimation } from "@/components/background-gradient-animation";
+import { TextHoverEffect } from "@/components/text-hover-effect";
+import {Button, ButtonGroup} from "@heroui/button";
+import Image from "next/image";
+import { FaInstagram } from "react-icons/fa";
+import { CiLinkedin } from "react-icons/ci";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
-export default function ComingSoonPage() {
-  const [phone, setPhone] = useState("")
-  const initialState: FormState = { success: false, message: "" }
-  const [state, formAction, isPending] = useActionState(joinWaitlist, initialState)
-
-  const handleSubmit = (formData: FormData) => {
-    formAction(formData)
-  }
-
-  useEffect(() => {
-    if (state.message) {
-      toast(state.message, {
-        type: state.success ? "success" : "error",
-      })
-    }
-  }, [state])
-
+export default function Home() {
+  
   return (
-    <div className="h-svh    text-white relative overflow-hidden">
+    <section  className="h-screen  text-white relative overflow-hidden">
  <BackgroundGradientAnimation />
-
- <div className="absolute inset-0 flex items-center justify-center">
+  <div className="absolute inset-0 flex items-center justify-center">
   <Image
     className="w-full h-full max-w-5xl  object-cover"
     src="/image.png" width={500} height={500} alt="Coming Soon"/>
  </div>
-<main className="relative z-20 backdrop-blur-sm flex flex-col items-center r w-full h-full">
+ <main className="relative z-20 backdrop-blur-sm backdrop-brightness-50 flex flex-col items-center r w-full h-full">
           {/* Main Content */}
       <div className="relative z-50 flex-1 gap-4 flex items-center flex-col  px-4 py-8">
         {/* Waitlist Badge */}
@@ -70,13 +48,13 @@ export default function ComingSoonPage() {
             href="https://www.instagram.com/fashnect/"
             className="w-12 h-12 bg-white/10  border border-white/20 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
           >
-            <Instagram size={20} />
+            <FaInstagram  size={20} />
           </a>
           <a
             href="https://www.linkedin.com/company/fashnect/"
             className="w-12 h-12 bg-white/10  border border-white/20 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
           >
-            <Linkedin size={20} />
+            <CiLinkedin  size={20} />
           </a>
           {/* <a
             href="#"
@@ -90,7 +68,6 @@ export default function ComingSoonPage() {
 
 </main>
 
-</div>
-  )
+    </section>
+  );
 }
-
