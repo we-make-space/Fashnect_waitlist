@@ -1,6 +1,5 @@
 import { sendWaitlistOnboardingEmails } from "@/lib/email/send-waitlist-onboarding"
 import { supabase } from "@/lib/supabase"
-import { after } from "next/server"
 import { NextResponse } from "next/server"
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -84,19 +83,27 @@ export async function POST(request: Request) {
 
   const phoneForEmail = phoneRaw.trim() || cleanPhone || null
 
-  after(async () => {
-    try {
-      await sendWaitlistOnboardingEmails({
-        email,
-        name,
+  try {
+    await sendWaitlistOnboardingEmails({
+      email,
+      name,
+      role,
+      whatsappUrl,
+      phone: phoneForEmail,
+    })
+  } catch (err) {
+    console.error("Waitlist email failed:", err)
+    return NextResponse.json(
+      {
+        success: true,
+        joinUrl: whatsappUrl,
         role,
-        whatsappUrl,
-        phone: phoneForEmail,
-      })
-    } catch (err) {
-      console.error("Background waitlist email failed:", err)
-    }
-  })
+        message:
+          "You're on the list, but we couldn't send the welcome email. Check spam or use the WhatsApp link below.",
+      },
+      { status: 502 },
+    )
+  }
 
   return NextResponse.json({ success: true, joinUrl: whatsappUrl, role })
 }
