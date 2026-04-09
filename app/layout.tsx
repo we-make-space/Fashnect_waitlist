@@ -1,125 +1,146 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import "./globals.css"
+import "./globals.css";
 
 import clsx from "clsx";
 
 import { Providers } from "./providers";
 
-import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
+import { fontHeading, fontMono } from "@/config/fonts";
+import {
+	BRAND,
+	SEO_DESCRIPTION,
+	SEO_KEYWORDS,
+	SEO_TITLE_DEFAULT,
+	SEO_TITLE_TEMPLATE,
+	getMetadataJsonLd,
+	getSiteUrl,
+} from "@/config/seo";
 
+const SITE_URL = getSiteUrl();
+
+const OG_LOGO = {
+	url: '/fashnect.svg',
+	width: 302,
+	height: 302,
+	alt: `${BRAND} logo`,
+	type: 'image/svg+xml',
+} as const;
 
 export const metadata: Metadata = {
-  title: "Fashnect - Connect with Fashion Buyers & Sellers",
-  description: "Join Fashnect's waitlist - The platform where fashion sellers connect with interested buyers. Be first to experience the future of fashion commerce.",
-  generator: 'Next.js',
-  applicationName: 'Fashnect',
-  referrer: 'origin-when-cross-origin',
-  keywords: ['fashion marketplace', 'clothing sellers', 'fashion buyers', 'waitlist', 'fashion platform'],
-  authors: [{ name: 'Your Name', url: 'https://fashnect.com' }],
-  creator: 'Fashnect',
-  publisher: 'Fashnect',
-  formatDetection: {
-    email: true,
-    address: false,
-    telephone: true,
-  },
-  metadataBase: new URL('https://fashnect.com'), // REPLACE WITH YOUR ACTUAL DOMAIN
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'Fashnect - Fashion Marketplace Platform',
-    description: 'Connecting fashion sellers with interested buyers',
-    url: 'https://fashnect.com',
-    siteName: 'Fashnect',
-    images: [
-      {
-        url: 'https://fashnect.com/Fashnect.PNG', // REPLACE WITH YOUR OG IMAGE
-        width: 1200,
-        height: 630,
-        alt: 'Fashnect Platform Preview',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Fashnect - Fashion Marketplace Platform',
-    description: 'Connecting fashion sellers with interested buyers',
-    images: ['https://fashnect.com/Fashnect.PNG'], // REPLACE WITH YOUR TWITTER IMAGE
-  },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
-      index: true,
-      follow: true,
-      noimageindex: false,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-}
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Fashnect",
-  "url": "https://fashnect.com",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://fashnect.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
+	metadataBase: new URL(SITE_URL),
+	title: {
+		default: SEO_TITLE_DEFAULT,
+		template: SEO_TITLE_TEMPLATE,
+	},
+	description: SEO_DESCRIPTION,
+	applicationName: BRAND,
+	authors: [{ name: BRAND, url: SITE_URL }],
+	creator: BRAND,
+	publisher: BRAND,
+	generator: 'Next.js',
+	referrer: 'origin-when-cross-origin',
+	keywords: [...SEO_KEYWORDS],
+	formatDetection: {
+		email: false,
+		address: false,
+		telephone: false,
+	},
+	alternates: {
+		canonical: '/',
+		languages: {
+			'en-US': '/',
+		},
+	},
+	category: 'fashion',
+	openGraph: {
+		type: 'website',
+		locale: 'en_US',
+		alternateLocale: ['en_GH'],
+		url: SITE_URL,
+		siteName: `${BRAND} waitlist`,
+		title: SEO_TITLE_DEFAULT,
+		description: SEO_DESCRIPTION,
+		images: [OG_LOGO],
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: SEO_TITLE_DEFAULT,
+		description: SEO_DESCRIPTION,
+		images: ['/fashnect.svg'],
+	},
+	robots: {
+		index: true,
+		follow: true,
+		nocache: false,
+		googleBot: {
+			index: true,
+			follow: true,
+			noimageindex: false,
+			'max-video-preview': -1,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+		},
+	},
+	icons: {
+		icon: [
+			{ url: '/favicon.ico' },
+			{ url: '/fashnect.svg', type: 'image/svg+xml' },
+		],
+		shortcut: '/favicon.ico',
+		apple: '/fashnect.svg',
+	},
+	appleWebApp: {
+		capable: true,
+		title: BRAND,
+		statusBarStyle: 'black-translucent',
+	},
+	verification: {
+		google: 'cx1bSzglD8CWkrHDoqGkzdOuDSWqJGlwed4Sih447CM',
+	},
+	other: {
+		'msapplication-TileColor': '#000000',
+	},
+	manifest: '/manifest.json',
+};
+
+const jsonLd = getMetadataJsonLd();
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+	width: 'device-width',
+	initialScale: 1,
+	viewportFit: 'cover',
+	themeColor: [
+		{ media: '(prefers-color-scheme: light)', color: '#ffffff' },
+		{ media: '(prefers-color-scheme: dark)', color: '#000000' },
+	],
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html suppressHydrationWarning lang="en">
-  <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="apple-mobile-web-app-title" content="Fashnect" />
-        <meta name="application-name" content="Fashnect" />
-        <meta name="msapplication-TileColor" content="#000000" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta name="google-site-verification" content="cx1bSzglD8CWkrHDoqGkzdOuDSWqJGlwed4Sih447CM" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
-      <body
-        className={clsx(
-          " text-foreground  font-sans antialiased",
-          fontSans.variable,
-        )}
-      >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-
-        {children}
-
-        </Providers>
-      </body>
-    </html>
-  );
+	return (
+		<html suppressHydrationWarning lang="en">
+			<head>
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+				<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/satoshi" />
+				<script
+					type="application/ld+json"
+					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+				/>
+			</head>
+			<body
+				className={clsx(
+					'text-foreground font-sans antialiased',
+					fontHeading.variable,
+					fontMono.variable,
+				)}
+			>
+				<Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>{children}</Providers>
+			</body>
+		</html>
+	);
 }

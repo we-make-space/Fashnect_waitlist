@@ -1,4 +1,4 @@
-
+@reference "../styles/globals.css";
 
 @layer base {
   :root {
@@ -63,6 +63,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold tracking-tight;
   }
 }
 
