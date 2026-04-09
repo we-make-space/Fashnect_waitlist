@@ -43,16 +43,29 @@ export function WaitlistForm() {
     return Object.keys(newErrors).length === 0
   }
 
+  // Add this function to clear email error when user starts typing
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value
+    setEmail(newEmail)
+    // Clear the email error when user starts typing a new email
+    if (errors.email) {
+      setErrors(prev => ({ ...prev, email: undefined }))
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (isPending) return
+    
+    // Reset any existing errors before validation
+    setErrors({})
+    
     setIsPending(true)
 
     if (!validateForm()) {
       addToast({
         title: "Validation Error",
         description: "Please fix the errors in the form",
-      // Add variant if required
       })
       setIsPending(false)
       return
@@ -66,7 +79,7 @@ export function WaitlistForm() {
         .insert([{
           email: email.toLowerCase().trim(),
           phone: cleanPhone,
-          role: role.toLowerCase(), // Removed .value since role is just a string
+          role: role.toLowerCase(),
         }])
 
       if (error) {
@@ -75,32 +88,31 @@ export function WaitlistForm() {
           addToast({
             title: "Already Registered",
             description: "This email is already on our waitlist!",
-         
           })
+          setIsPending(false) // Make sure to set isPending to false here
+          return
         } else {
           throw error
         }
-        return
+      } else {
+        // Only show success and reset form if no error
+        addToast({
+          title: "Success!",
+          description: "You've been added to the waitlist.",
+        })
+
+        setEmail("")
+        setPhone("")
+        setRole("")
+        setErrors({})
+        setIsPending(false)
       }
-
-      addToast({
-        title: "Success!",
-        description: "You've been added to the waitlist.",
-
-      })
-
-      setEmail("")
-      setPhone("")
-      setRole("")
-      setErrors({})
     } catch (err) {
       console.error("Submission error:", err)
       addToast({
         title: "Error",
         description: "Something went wrong. Please try again.",
-     
       })
-    } finally {
       setIsPending(false)
     }
   }
@@ -119,7 +131,7 @@ export function WaitlistForm() {
           errorMessage={errors.email}
           isInvalid={!!errors.email}
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           required
         />
 
@@ -145,6 +157,10 @@ export function WaitlistForm() {
           onSelectionChange={(keys) => {
             const key = Array.from(keys)[0] as string;
             setRole(key || "");
+            // Clear role error when user selects
+            if (errors.role) {
+              setErrors(prev => ({ ...prev, role: undefined }))
+            }
           }}
           radius="full"
           variant="bordered"
