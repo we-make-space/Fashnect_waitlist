@@ -175,6 +175,7 @@ export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
         title: "Error",
         description: "Something went wrong. Please try again.",
       })
+    } finally {
       setIsPending(false)
     }
   }
