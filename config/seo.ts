@@ -1,7 +1,21 @@
+/** Canonical waitlist host — override with NEXT_PUBLIC_SITE_URL in env */
+export const DEFAULT_SITE_URL = 'https://waitlist.fashnect.com';
+
+/** Open Graph / Twitter card — file in `public/` (1200×630 recommended) */
+export const OG_SHARE_IMAGE_PATH = '/fashnect_image_vendor.png';
+/** Matches `public/fashnect_image_vendor.png` (≈1.91:1 — good for OG cards) */
+export const OG_SHARE_IMAGE_WIDTH = 1376;
+export const OG_SHARE_IMAGE_HEIGHT = 768;
+
 /** Site URL with no trailing slash — use for metadata, sitemap, robots, JSON-LD */
 export function getSiteUrl(): string {
-	const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://fashnect.com';
+	const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
 	return raw.replace(/\/+$/, '');
+}
+
+/** Absolute URL to the default social preview image */
+export function getOgShareImageUrl(): string {
+	return `${getSiteUrl()}${OG_SHARE_IMAGE_PATH}`;
 }
 
 export const BRAND = 'Fashnect';
@@ -16,6 +30,10 @@ export const SEO_TITLE_TEMPLATE = '%s · Fashnect waitlist';
 /** Meta description — unique value prop; target ~150–165 characters */
 export const SEO_DESCRIPTION =
 	'Reserve your spot for Fashnect: a fashion marketplace that works like social media. Early access for independent sellers and buyers—launch news, zero inbox clutter.';
+
+/** Alt text for Open Graph / Twitter preview image */
+export const SEO_OG_IMAGE_ALT =
+	'Fashnect waitlist — early access to social fashion commerce for sellers and buyers';
 
 export const SEO_KEYWORDS = [
 	BRAND,
@@ -78,7 +96,9 @@ export function getMetadataJsonLd() {
 				about: { '@id': `${base}/#organization` },
 				primaryImageOfPage: {
 					'@type': 'ImageObject',
-					url: `${base}/fashnect.svg`,
+					url: `${base}${OG_SHARE_IMAGE_PATH}`,
+					width: OG_SHARE_IMAGE_WIDTH,
+					height: OG_SHARE_IMAGE_HEIGHT,
 				},
 			},
 		],

@@ -18,10 +18,33 @@ export async function sendEmail({
     throw new Error("SMTP_FROM or SMTP_USER must be set for the From address.")
   }
 
-  await transporter.sendMail({
-    from,
-    to,
-    subject,
-    html,
-  })
+  try {
+    const info = await transporter.sendMail({
+      from,
+      to,
+      subject,
+      html,
+    })
+    if (process.env.NODE_ENV === "development") {
+      console.log("[email] sent", { to, subject: subject.slice(0, 48), messageId: info.messageId })
+    }
+  } catch (err: unknown) {
+    const e = err as {
+      message?: string
+      code?: string
+      command?: string
+      response?: string
+      responseCode?: number
+    }
+    console.error("[email] sendMail failed", {
+      to,
+      subject: subject.slice(0, 60),
+      message: e.message,
+      code: e.code,
+      responseCode: e.responseCode,
+      response: e.response,
+      command: e.command,
+    })
+    throw err
+  }
 }

@@ -20,6 +20,8 @@ export interface TeamWaitlistSignupEmailProps {
   email: string
   phone: string | null
   role: TeamSignupRole
+  /** Optional freeform location from the signup form */
+  location?: string | null
 }
 
 function telHrefFromPhone(phone: string | null | undefined): string | undefined {
@@ -45,9 +47,11 @@ export default function TeamWaitlistSignupEmail({
   email,
   phone,
   role,
+  location,
 }: TeamWaitlistSignupEmailProps) {
   const displayName = name.trim() || "—"
   const phoneLine = phone?.trim() ? phone.trim() : "Not provided"
+  const locationLine = location?.trim() ? location.trim() : "Not provided"
   const mailto = `mailto:${encodeURIComponent(email)}`
   const telHref = telHrefFromPhone(phone)
 
@@ -84,6 +88,7 @@ export default function TeamWaitlistSignupEmail({
                   )
                 }
               />
+              <Row label="Location" value={locationLine} />
               <Row label="Role" value={roleLabel(role)} hint={roleDescription(role)} />
             </Section>
 

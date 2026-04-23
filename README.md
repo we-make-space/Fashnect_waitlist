@@ -41,11 +41,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Supabase: `location` column (waitlist)
+
+The public form can collect an optional **Location** field. If your `waitlist` table was created before that feature, run the SQL in [`supabase/migrations/20250423120000_add_location_to_waitlist.sql`](./supabase/migrations/20250423120000_add_location_to_waitlist.sql) in the Supabase **SQL Editor** (or apply it with the Supabase CLI) so inserts include `location` without errors.
+
 ## Environment variables
 
 | Variable | Purpose |
 | -------- | -------- |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin (no trailing slash). Drives `metadataBase`, sitemap, robots, JSON-LD. Defaults to `https://fashnect.com`. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin (no trailing slash). Drives `metadataBase`, sitemap, robots, JSON-LD, Open Graph. Defaults to `https://waitlist.fashnect.com`. |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser Supabase client (waitlist insert + admin list). |
 | `SMTP_*` | Outbound mail for confirmations / internal alerts (see `.env.example`). |
 | `WHATSAPP_SELLER` / `WHATSAPP_BUYER` | Invite links returned after signup. |

@@ -120,6 +120,12 @@ const cta: CSSProperties = {
   lineHeight: 1.35,
 }
 
+const ctaWhatsapp: CSSProperties = {
+  ...cta,
+  backgroundColor: "#25D366",
+  color: "#ffffff",
+}
+
 const hr: CSSProperties = {
   border: "none",
   borderTop: "1px solid #e8e8ed",

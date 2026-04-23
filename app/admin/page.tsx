@@ -9,6 +9,7 @@ interface WaitlistEntry {
   id: string
   email: string
   phone?: string
+  location?: string | null
   created_at: string
   name?: string
   referral_source?: string
@@ -57,11 +58,12 @@ export default function AdminPage() {
     }
 
     const csvContent = [
-      ["Email", "Name", "Phone", "Referral Source", "Signup Date"],
+      ["Email", "Name", "Phone", "Location", "Referral Source", "Signup Date"],
       ...entries.map(e => [
         e.email,
         e.name || "-",
         e.phone || "-",
+        (e.location && String(e.location).trim()) || "-",
         e.referral_source || "Direct",
         new Date(e.created_at).toLocaleString()
       ])
@@ -79,7 +81,8 @@ export default function AdminPage() {
   const filteredEntries = entries.filter(entry =>
     entry.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (entry.phone && entry.phone.includes(searchTerm)) ||
-    (entry.name && entry.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    (entry.name && entry.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (entry.location && String(entry.location).toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   if (loading) {
@@ -221,6 +224,9 @@ export default function AdminPage() {
                     Phone
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
+                    Location
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
                     Source
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
@@ -242,6 +248,11 @@ export default function AdminPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm ">{entry.phone || '-'}</div>
+                    </td>
+                    <td className="px-6 py-4 max-w-xs">
+                      <div className="text-sm truncate" title={entry.location || undefined}>
+                        {entry.location?.trim() || '—'}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm ">{entry.referral_source || 'Direct'}</div>

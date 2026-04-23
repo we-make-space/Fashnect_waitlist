@@ -28,6 +28,7 @@ export function getTransporter(): Transporter {
     host,
     port,
     secure: port === 465,
+    requireTLS: port === 587,
     auth: { user, pass },
     pool: !serverless,
     ...(serverless

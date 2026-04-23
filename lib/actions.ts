@@ -2,6 +2,8 @@
 
 import { supabase } from "./supabase"
 
+import { WAITLIST_LOCATION_MAX_LEN } from "./waitlist-constants"
+
 export interface FormState {
   success: boolean
   message: string
@@ -9,6 +11,7 @@ export interface FormState {
     email?: string
     phone?: string
     role?: string
+    location?: string
   }
 }
 
@@ -16,9 +19,11 @@ export async function joinWaitlist(prevState: FormState, formData: FormData): Pr
   const email = formData.get("email") as string
   const phone = formData.get("phone") as string
   const role = formData.get("role") as string
+  const locationRaw = formData.get("location") as string
+  const location = typeof locationRaw === "string" ? locationRaw.trim() : ""
 
   // Validation
-  const errors: { email?: string; phone?: string; role?: string } = {}
+  const errors: { email?: string; phone?: string; role?: string; location?: string } = {}
 
   // Email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -39,6 +44,10 @@ export async function joinWaitlist(prevState: FormState, formData: FormData): Pr
     errors.role = "Please select a role";
   }
 
+  if (location.length > WAITLIST_LOCATION_MAX_LEN) {
+    errors.location = `Location must be ${WAITLIST_LOCATION_MAX_LEN} characters or less`;
+  }
+
   if (Object.keys(errors).length > 0) {
     return {
       success: false,
@@ -57,6 +66,7 @@ export async function joinWaitlist(prevState: FormState, formData: FormData): Pr
           email: email.toLowerCase().trim(),
           phone: cleanPhone,
           role,
+          location: location || null,
         },
       ])
       .select()

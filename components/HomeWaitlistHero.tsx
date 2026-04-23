@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 import { useState } from "react"
 import { WaitlistForm } from "@/components/WaitlistForm"
+import { TextHoverEffect } from "@/components/text-hover-effect"
 
 export function HomeWaitlistHero() {
   const [waitlistComplete, setWaitlistComplete] = useState(false)
@@ -54,9 +55,14 @@ export function HomeWaitlistHero() {
         </AnimatePresence>
       </div>
 
-      <div className="w-full min-w-0 backdrop-blur-lg max-w-2xl mx-auto shrink min-h-0">
-        <div className="border border-white/20 rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-5 xl:p-6 shadow-2xl">
-          <WaitlistForm onThankYouView={() => setWaitlistComplete(true)} />
+      <div className="flex flex-col items-center w-full min-w-0 gap-0">
+        <div className="w-full min-w-0 backdrop-blur-lg max-w-2xl mx-auto shrink min-h-0">
+          <div className="border border-white/20 rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-5 xl:p-6 shadow-2xl">
+            <WaitlistForm onThankYouView={() => setWaitlistComplete(true)} />
+          </div>
+        </div>
+        <div className="shrink-0 w-full max-w-[min(100%,72rem)] mx-auto px-2 sm:px-4 -mt-2 sm:-mt-3 md:-mt-4 lg:-mt-5">
+          <TextHoverEffect text="FASHNECT" />
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import { BackgroundGradientAnimation } from "@/components/background-gradient-animation";
-import { TextHoverEffect } from "@/components/text-hover-effect";
 import { HomeWaitlistHero } from "@/components/HomeWaitlistHero";
 import Image from "next/image";
 import { FaInstagram } from "react-icons/fa";
@@ -64,9 +63,6 @@ export default function Home() {
               <CiLinkedin size={20} />
             </a>
           </div>
-        </div>
-        <div className="shrink-0 w-full max-w-[min(100%,72rem)] mx-auto px-2 sm:px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
-          <TextHoverEffect text="FASHNECT" />
         </div>
       </main>
     </section>

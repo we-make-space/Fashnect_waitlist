@@ -1,5 +1,7 @@
 import { sendWaitlistOnboardingEmails } from "@/lib/email/send-waitlist-onboarding"
+import { isWaitlistSmtpConfigured } from "@/lib/email/smtp-env"
 import { supabase } from "@/lib/supabase"
+import { WAITLIST_LOCATION_MAX_LEN } from "@/lib/waitlist-constants"
 import { NextResponse } from "next/server"
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -33,6 +35,14 @@ export async function POST(request: Request) {
   const role = record.role
   const phoneRaw = typeof record.phone === "string" ? record.phone : ""
   const name = normalizeName(record.name, emailRaw.toLowerCase())
+  const locationRaw = typeof record.location === "string" ? record.location.trim() : ""
+  if (locationRaw.length > WAITLIST_LOCATION_MAX_LEN) {
+    return NextResponse.json(
+      { error: "invalid_location", message: `Location must be ${WAITLIST_LOCATION_MAX_LEN} characters or less` },
+      { status: 400 },
+    )
+  }
+  const location = locationRaw || null
 
   if (!emailRaw) {
     return NextResponse.json({ error: "Email is required" }, { status: 400 })
@@ -65,23 +75,61 @@ export async function POST(request: Request) {
     )
   }
 
-  const { error: dbError } = await supabase.from("waitlist").insert([
-    {
-      email,
-      phone: cleanPhone,
-      role,
-    },
-  ])
+  const baseRow = {
+    email,
+    phone: cleanPhone,
+    role,
+  }
 
-  if (dbError) {
-    if (dbError.code === "23505") {
+  let insertError = (
+    await supabase.from("waitlist").insert([
+      {
+        ...baseRow,
+        location,
+      },
+    ])
+  ).error
+
+  // Supabase schema cache: missing `location` column (PGRST204) — run
+  // supabase/migrations/20250423120000_add_location_to_waitlist.sql in the SQL editor.
+  const isMissingLocationColumn =
+    insertError?.code === "PGRST204" &&
+    typeof insertError.message === "string" &&
+    insertError.message.includes("'location'")
+
+  if (isMissingLocationColumn) {
+    console.warn(
+      "[waitlist] `location` column missing on `waitlist` table; saving without it. Run: supabase/migrations/20250423120000_add_location_to_waitlist.sql",
+    )
+    const retry = await supabase.from("waitlist").insert([baseRow])
+    insertError = retry.error
+  }
+
+  if (insertError) {
+    if (insertError.code === "23505") {
       return NextResponse.json({ error: "duplicate", message: "Email already registered" }, { status: 409 })
     }
-    console.error("Waitlist insert error:", dbError)
+    console.error("Waitlist insert error:", insertError)
     return NextResponse.json({ error: "Failed to save signup" }, { status: 500 })
   }
 
   const phoneForEmail = phoneRaw.trim() || cleanPhone || null
+
+  if (!isWaitlistSmtpConfigured()) {
+    console.warn(
+      "[waitlist] SMTP not configured. Set SMTP_HOST, SMTP_PORT (optional, default 587), SMTP_USER, SMTP_PASS, and SMTP_FROM (or rely on SMTP_USER as From). See .env.example.",
+    )
+    return NextResponse.json(
+      {
+        success: true,
+        joinUrl: whatsappUrl,
+        role,
+        message:
+          "You're on the list. Welcome email couldn't be sent because mail isn't configured on the server yet—check spam later or use the WhatsApp link below.",
+      },
+      { status: 502 },
+    )
+  }
 
   try {
     await sendWaitlistOnboardingEmails({
@@ -90,6 +138,7 @@ export async function POST(request: Request) {
       role,
       whatsappUrl,
       phone: phoneForEmail,
+      location,
     })
   } catch (err) {
     console.error("Waitlist email failed:", err)

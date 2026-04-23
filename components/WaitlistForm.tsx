@@ -1,4 +1,4 @@
-  "use client"
+"use client"
 
 import { useState } from "react"
 import { Input } from "@heroui/input"
@@ -8,6 +8,7 @@ import { Select, SelectItem, SelectSection } from "@heroui/react"
 import { addToast } from "@heroui/toast"
 import { SuccessModal, type SuccessModalRole } from "@/components/SuccessModal"
 import { WaitlistThankYou } from "@/components/WaitlistThankYou"
+import { WAITLIST_LOCATION_MAX_LEN } from "@/lib/waitlist-constants"
 
 function mapFormRoleToApi(formRole: string): SuccessModalRole | null {
   if (formRole === "provider") return "seller"
@@ -28,6 +29,7 @@ export interface WaitlistFormProps {
 export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
+  const [location, setLocation] = useState("")
   const [role, setRole] = useState("")
   const [isPending, setIsPending] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -37,6 +39,7 @@ export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
   const [errors, setErrors] = useState<{
     email?: string
     phone?: string
+    location?: string
     role?: string
   }>({})
 
@@ -54,6 +57,11 @@ export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
 
     if (phone && !phoneRegex.test(cleanPhone)) {
       newErrors.phone = "Please enter a valid phone number"
+    }
+
+    const locTrim = location.trim()
+    if (locTrim.length > WAITLIST_LOCATION_MAX_LEN) {
+      newErrors.location = `Location must be ${WAITLIST_LOCATION_MAX_LEN} characters or less`
     }
 
     if (!role) {
@@ -105,10 +113,12 @@ export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
 
     try {
       const name = deriveNameFromEmail(email.toLowerCase().trim())
+      const loc = location.trim()
       const payload = {
         name,
         email: email.toLowerCase().trim(),
         phone: phone.trim() || undefined,
+        location: loc || undefined,
         role: apiRole,
       }
 
@@ -160,8 +170,15 @@ export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
 
         setEmail("")
         setPhone("")
+        setLocation("")
         setRole("")
         setErrors({})
+        return
+      }
+
+      if (res.status === 400 && data.error === "invalid_location" && data.message) {
+        setErrors({ location: data.message })
+        addToast({ title: "Check location", description: data.message })
         return
       }
 
@@ -233,6 +250,29 @@ export function WaitlistForm({ onThankYouView }: WaitlistFormProps) {
             isInvalid={!!errors.phone}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+          />
+
+          <Input
+            id="waitlist-location"
+            type="text"
+            name="location"
+            autoComplete="address-level2"
+            label="Location"
+            labelPlacement="outside"
+            placeholder="Enter your location"
+            radius="full"
+            variant="bordered"
+            color={errors.location ? "danger" : "default"}
+            errorMessage={errors.location}
+            isInvalid={!!errors.location}
+            value={location}
+            onChange={(e) => {
+              setLocation(e.target.value)
+              if (errors.location) {
+                setErrors((prev) => ({ ...prev, location: undefined }))
+              }
+            }}
+            description={`${location.trim().length}/${WAITLIST_LOCATION_MAX_LEN} characters`}
           />
 
           <Select

@@ -9,8 +9,12 @@ import { Providers } from "./providers";
 import { fontHeading, fontMono } from "@/config/fonts";
 import {
 	BRAND,
+	OG_SHARE_IMAGE_HEIGHT,
+	OG_SHARE_IMAGE_PATH,
+	OG_SHARE_IMAGE_WIDTH,
 	SEO_DESCRIPTION,
 	SEO_KEYWORDS,
+	SEO_OG_IMAGE_ALT,
 	SEO_TITLE_DEFAULT,
 	SEO_TITLE_TEMPLATE,
 	getMetadataJsonLd,
@@ -19,12 +23,12 @@ import {
 
 const SITE_URL = getSiteUrl();
 
-const OG_LOGO = {
-	url: '/fashnect.svg',
-	width: 302,
-	height: 302,
-	alt: `${BRAND} logo`,
-	type: 'image/svg+xml',
+const OG_SHARE_IMAGE = {
+	url: OG_SHARE_IMAGE_PATH,
+	width: OG_SHARE_IMAGE_WIDTH,
+	height: OG_SHARE_IMAGE_HEIGHT,
+	alt: SEO_OG_IMAGE_ALT,
+	type: "image/png",
 } as const;
 
 export const metadata: Metadata = {
@@ -53,7 +57,7 @@ export const metadata: Metadata = {
 		},
 	},
 	category: 'fashion',
-	openGraph: {
+		openGraph: {
 		type: 'website',
 		locale: 'en_US',
 		alternateLocale: ['en_GH'],
@@ -61,13 +65,13 @@ export const metadata: Metadata = {
 		siteName: `${BRAND} waitlist`,
 		title: SEO_TITLE_DEFAULT,
 		description: SEO_DESCRIPTION,
-		images: [OG_LOGO],
+		images: [OG_SHARE_IMAGE],
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: SEO_TITLE_DEFAULT,
 		description: SEO_DESCRIPTION,
-		images: ['/fashnect.svg'],
+		images: [OG_SHARE_IMAGE],
 	},
 	robots: {
 		index: true,
@@ -132,12 +136,14 @@ export default function RootLayout({
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
 				/>
 			</head>
+			{/* Some extensions inject body attrs (e.g. cz-shortcut-listen); avoids false hydration warnings. */}
 			<body
 				className={clsx(
 					'text-foreground font-sans antialiased',
 					fontHeading.variable,
 					fontMono.variable,
 				)}
+				suppressHydrationWarning
 			>
 				<Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>{children}</Providers>
 			</body>

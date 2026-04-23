@@ -18,8 +18,10 @@ export async function sendWaitlistOnboardingEmails(payload: {
   whatsappUrl: string
   /** Display/submitted phone; omit or null when not provided */
   phone: string | null
+  /** User-entered city, region, or freeform location */
+  location?: string | null
 }) {
-  const { email, name, role, whatsappUrl, phone } = payload
+  const { email, name, role, whatsappUrl, phone, location } = payload
 
   const onboardingHtml =
     role === "seller"
@@ -48,6 +50,7 @@ export async function sendWaitlistOnboardingEmails(payload: {
             email,
             phone,
             role,
+            location: location ?? null,
           }),
         ),
       }).catch((err) => {
