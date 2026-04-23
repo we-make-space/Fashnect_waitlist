@@ -10,21 +10,23 @@ import { fontHeading, fontMono } from "@/config/fonts";
 import {
 	BRAND,
 	OG_SHARE_IMAGE_HEIGHT,
-	OG_SHARE_IMAGE_PATH,
 	OG_SHARE_IMAGE_WIDTH,
 	SEO_DESCRIPTION,
 	SEO_KEYWORDS,
+	SEO_OG_DESCRIPTION,
 	SEO_OG_IMAGE_ALT,
 	SEO_TITLE_DEFAULT,
 	SEO_TITLE_TEMPLATE,
 	getMetadataJsonLd,
+	getOgShareImageUrl,
 	getSiteUrl,
 } from "@/config/seo";
 
 const SITE_URL = getSiteUrl();
 
+/** Absolute `og:image` / `twitter:image` URL — required for WhatsApp / Meta crawlers */
 const OG_SHARE_IMAGE = {
-	url: OG_SHARE_IMAGE_PATH,
+	url: getOgShareImageUrl(),
 	width: OG_SHARE_IMAGE_WIDTH,
 	height: OG_SHARE_IMAGE_HEIGHT,
 	alt: SEO_OG_IMAGE_ALT,
@@ -57,20 +59,20 @@ export const metadata: Metadata = {
 		},
 	},
 	category: 'fashion',
-		openGraph: {
+	openGraph: {
 		type: 'website',
 		locale: 'en_US',
 		alternateLocale: ['en_GH'],
 		url: SITE_URL,
 		siteName: `${BRAND} waitlist`,
 		title: SEO_TITLE_DEFAULT,
-		description: SEO_DESCRIPTION,
+		description: SEO_OG_DESCRIPTION,
 		images: [OG_SHARE_IMAGE],
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: SEO_TITLE_DEFAULT,
-		description: SEO_DESCRIPTION,
+		description: SEO_OG_DESCRIPTION,
 		images: [OG_SHARE_IMAGE],
 	},
 	robots: {

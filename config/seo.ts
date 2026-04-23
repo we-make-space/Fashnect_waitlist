@@ -31,6 +31,13 @@ export const SEO_TITLE_TEMPLATE = '%s · Fashnect waitlist';
 export const SEO_DESCRIPTION =
 	'Reserve your spot for Fashnect: a fashion marketplace that works like social media. Early access for independent sellers and buyers—launch news, zero inbox clutter.';
 
+/**
+ * Open Graph / Twitter / WhatsApp link preview description.
+ * Keep ~100–200 chars: clear hook + who it’s for (crawlers may truncate).
+ */
+export const SEO_OG_DESCRIPTION =
+	'Join the Fashnect waitlist — fashion that feels like social: discover sellers, shop direct, early access for boutiques & buyers. Tap to reserve your spot.';
+
 /** Alt text for Open Graph / Twitter preview image */
 export const SEO_OG_IMAGE_ALT =
 	'Fashnect waitlist — early access to social fashion commerce for sellers and buyers';
@@ -96,7 +103,7 @@ export function getMetadataJsonLd() {
 				about: { '@id': `${base}/#organization` },
 				primaryImageOfPage: {
 					'@type': 'ImageObject',
-					url: `${base}${OG_SHARE_IMAGE_PATH}`,
+					url: getOgShareImageUrl(),
 					width: OG_SHARE_IMAGE_WIDTH,
 					height: OG_SHARE_IMAGE_HEIGHT,
 				},
